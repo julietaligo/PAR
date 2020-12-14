@@ -239,7 +239,7 @@ def validar_csv_viajes(planilla_viajes):
 
         if "." in str(precio):
             decimales = str(precio).split(".")[-1]
-            if not(validar_campos(viaje, cant_campos) and validar_documento(viaje[0]) and viaje[1] != "" and len(decimales) == 2):
+            if not(validar_campos(viaje, cant_campos) and validar_documento(viaje[0]) and len(decimales) == 2):
                 return False
         else:
             print(f"\nEl precio ${precio} no contiene decimales.")
@@ -251,7 +251,7 @@ def validar_csv_viajes(planilla_viajes):
 def validar_campos(linea, cant_campos):
 
     for i in range(0, cant_campos):
-        if len(linea[i]) == 0:
+        if linea[i] == "":
             print(f"\nEl archivo posee un campo vacío en la linea {linea}.")
             return False
 
