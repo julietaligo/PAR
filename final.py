@@ -1,5 +1,4 @@
 import csv, logging
-from tabulate import tabulate
 from decimal import Decimal
 
 def main():
