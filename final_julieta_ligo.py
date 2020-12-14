@@ -184,47 +184,54 @@ def imprimir_viajes(nombre_archivo_viajes, documento):
 #Metodo que valida el csv a cargar
 def validar_csv(nombre_archivo_clientes, nombre_archivo_viajes):
 
-    es_valido = False
+    es_valido_csv_clientes = True
+    es_valido_csv_viajes = True
 
     try:
         if nombre_archivo_clientes != "":
             with open(nombre_archivo_clientes, "r", newline="") as file_clientes:
 
                 planilla_clientes = csv.reader(file_clientes)
-                next(planilla_clientes)
 
-                es_valido = validar_csv_clientes(planilla_clientes)
+                es_valido_csv_clientes = validar_csv_clientes(planilla_clientes)
 
         if nombre_archivo_viajes != "":
             with open(nombre_archivo_viajes, "r", newline="") as file_viajes:
 
                 planilla_viajes = csv.reader(file_viajes)
-                next(planilla_viajes)
 
-                es_valido = validar_csv_viajes(planilla_viajes)
+                es_valido_csv_viajes = validar_csv_viajes(planilla_viajes)
 
-        return es_valido
+        return (es_valido_csv_clientes and es_valido_csv_viajes)
     except IOError:
         print("\nOcurrió un error con el archivo.")
 
 #Metodo particular para validar csv de clientes
 def validar_csv_clientes(planilla_clientes):
 
-    es_valido = False
+    cant_campos = len(next(planilla_clientes))
 
     for cliente in planilla_clientes:
         documento = cliente[2]
         email = cliente[4]
 
-        if validar_documento(documento) and "@" in email and "." in email:
-            es_valido = True
+        if not (validar_campos(cliente, cant_campos) and validar_documento(documento) and validar_email(email)):
+            return False
 
-    return es_valido
+    return True
+
+#Metodo que valida que el correo contenga "@" y "."
+def validar_email(email):
+    if not ("@" in email and  "." in email):
+        print(f"\nEl correo {email} no es valido.")
+        return False
+
+    return True
 
 #Metodo particular para validar csv de viajes
 def validar_csv_viajes(planilla_viajes):
 
-    es_valido = False
+    cant_campos = len(next(planilla_viajes))
 
     for viaje in planilla_viajes:
 
@@ -232,18 +239,31 @@ def validar_csv_viajes(planilla_viajes):
 
         if "." in str(precio):
             decimales = str(precio).split(".")[-1]
-            if validar_documento(viaje[0]) and viaje[1] != "" and len(decimales) == 2:
-                es_valido = True
+            if not(validar_campos(viaje, cant_campos) and validar_documento(viaje[0]) and viaje[1] != "" and len(decimales) == 2):
+                return False
+        else:
+            print(f"\nEl precio ${precio} no contiene decimales.")
+            return False
 
-    return es_valido
-                    
+    return True
 
+#Metodo que valida que los campos no esten vacios
+def validar_campos(linea, cant_campos):
+
+    for i in range(0, cant_campos-1):
+        if linea[i] == "":
+            print(f"\nEl archivo posee un campo vacío.")
+            return False
+
+    return True
+
+#Metodo que valida el largo del documento
 def validar_documento(documento):
     
     if len(documento) == 7 or len(documento) == 8:
         return True
     else:
-        print("El documento {documento} contiene {len(documento)} caracteres. Debe contener entre 7 y 8.")
+        print(f"\nEl documento {documento} contiene {len(documento)} caracteres. Debe contener entre 7 y 8.")
         return False
 
 #Metodo que guarda en log cada accion pasada por parametro
