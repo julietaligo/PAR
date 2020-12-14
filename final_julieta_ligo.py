@@ -250,9 +250,9 @@ def validar_csv_viajes(planilla_viajes):
 #Metodo que valida que los campos no esten vacios
 def validar_campos(linea, cant_campos):
 
-    for i in range(0, cant_campos-1):
-        if linea[i] == "":
-            print(f"\nEl archivo posee un campo vacío.")
+    for i in range(0, cant_campos):
+        if len(linea[i]) == 0:
+            print(f"\nEl archivo posee un campo vacío en la linea {linea}.")
             return False
 
     return True
